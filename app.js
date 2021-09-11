@@ -1,13 +1,15 @@
-import express, { response } from "express";
+import express from "express";
 import morgan from "morgan";
 import buyerRouter from "./routes/buyerRoutes.js";
 import sellerRouter from "./routes/sellerRoutes.js";
 
 const app = express();
-app.use(morgan("dev"));
-app.use(express.json()); //Help in json post req
 
 //middlewares
+
+app.use(morgan("dev"));
+
+app.use(express.json()); //Help in json post req
 
 app.use((req, res, next) => {
   console.log("Middleware running");

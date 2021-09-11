@@ -1,3 +1,5 @@
+import Seller from "../models/sellerModel.js";
+
 //Seller functions
 export const checkBody = (req, res, next) => {
   if (!req.body.name || !req.body.price) {
