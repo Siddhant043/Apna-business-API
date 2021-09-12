@@ -9,10 +9,6 @@ import {
 const router = express.Router();
 
 //middleware
-router.param("seller_id", (req, res, next, val) => {
-  console.log("Seller id is - " + val);
-  next();
-});
 
 router.route("/list-of-sellers").get(getListOfSellers);
 router.route("/seller-catalog/:seller_id").get(getSellerCatalog);

@@ -1,22 +1,79 @@
+import User from "../models/userModel.js";
 //Buyer function
-export const getListOfSellers = (req, res) => {
-  res.status(201).json([{ sellerId1: "abcd1" }, { sellerId2: "abcd2" }]);
+export const getListOfSellers = async (req, res) => {
+  try {
+    const allSellers = await User.find({ category: "seller" });
+    res.status(201).json({
+      status: "success",
+      sellers: allSellers,
+    });
+  } catch (error) {
+    res.status(401).json({
+      status: "failed",
+      error: error.message,
+    });
+  }
 };
 
-export const getSellerCatalog = (req, res) => {
-  res.status(201).json([
-    {
-      product: "ProductName",
-      buyer: "BuyerName",
-    },
-    {
-      product: "ProductName",
-      buyer: "BuyerName2",
-    },
-  ]);
+export const getSellerCatalog = async (req, res) => {
+  try {
+    const candidateId = req.params["seller_id"];
+    if (!(await User.findOne({ _id: candidateId }))) {
+      res.status(401).json({
+        status: "failed",
+        error: "Seller does not exist",
+      });
+    }
+    const seller = await User.findOne({ _id: candidateId });
+    res.status(201).json({
+      status: "success",
+      catalog: seller.catalog,
+    });
+  } catch (error) {
+    res.status(401).json({
+      status: "failed",
+      error: error.message,
+    });
+  }
 };
 
-export const createBuyerOrder = (req, res) => {
-  console.log(req.body);
-  res.send("Order done");
+export const createBuyerOrder = async (req, res) => {
+  try {
+    const candidateId = req.params["seller_id"];
+    const { productName } = req.body;
+
+    //checking if seller or product is present or not
+    if (!(await User.find({ _id: candidateId }))) {
+      res.status(401).json({
+        status: "failed",
+        error: "Seller does not exist",
+      });
+    }
+    const seller = await User.findOne({ _id: candidateId });
+    // checking if the product is in the array or not
+    let count = 0;
+    seller.catalog.map((obj) => {
+      if (obj.productName === productName) {
+        count++;
+      }
+    });
+    if (count === 0) {
+      res.status(401).json({
+        status: "failed",
+        error: "Product does not exist",
+      });
+    }
+    //if product exists
+    const newOrders = [...seller.orders, productName];
+    await User.updateOne({ _id: candidateId }, { $set: { orders: newOrders } });
+    res.status(201).json({
+      status: "success",
+      messege: "Done",
+    });
+  } catch (error) {
+    res.status(401).json({
+      status: "failed",
+      error: error.message,
+    });
+  }
 };

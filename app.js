@@ -2,7 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import buyerRouter from "./routes/buyerRoutes.js";
 import sellerRouter from "./routes/sellerRoutes.js";
-
+import authRouter from "./routes/authRoutes.js";
 const app = express();
 
 //middlewares
@@ -17,6 +17,8 @@ app.use((req, res, next) => {
 });
 
 //Routes
+//auth
+app.use("/api/auth", authRouter);
 //sellers
 app.use("/api/seller", sellerRouter);
 
