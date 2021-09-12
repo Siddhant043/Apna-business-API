@@ -1,4 +1,6 @@
 import express from "express";
+import auth from "../middleware/auth.js";
+
 import {
   createBuyerOrder,
   getListOfSellers,
@@ -10,8 +12,8 @@ const router = express.Router();
 
 //middleware
 
-router.route("/list-of-sellers").get(getListOfSellers);
-router.route("/seller-catalog/:seller_id").get(getSellerCatalog);
-router.route("/create-order/:seller_id").post(createBuyerOrder);
+router.route("/list-of-sellers").get(auth, getListOfSellers);
+router.route("/seller-catalog/:seller_id").get(auth, getSellerCatalog);
+router.route("/create-order/:seller_id").post(auth, createBuyerOrder);
 
 export default router;
